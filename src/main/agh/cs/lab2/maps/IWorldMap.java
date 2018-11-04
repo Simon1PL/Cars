@@ -51,4 +51,6 @@ public interface IWorldMap {
      * @return Object or null if the position is not occupied.
      */
     Object objectAt(Position position);
+
+    void removeObject(AbstractWorldMapElement object);
 }

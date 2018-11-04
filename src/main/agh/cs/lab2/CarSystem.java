@@ -16,13 +16,13 @@ public class CarSystem {
     public static void main(String[] args) {
         //LAB4 IWorldMap map = new RectangularMap(10, 5); plus to co lab5
         /*LAB5
-        MoveDirection[] directions = new OptionsParser().parse(new String[]{"b", "f", "b", "f", "l", "f"});
+        MoveDirection[] directions = new OptionsParser().parse(new String[]{"b", "r", "b", "r", "b", "f", "s", "f", "r", "f", "f"});
         List<HayStack> stacks = new ArrayList<>();
         stacks.add(new HayStack(-4, -4));
         stacks.add(new HayStack(7, 7));
         stacks.add(new HayStack(3, 6));
         stacks.add(new HayStack(2, 0));
-        IWorldMap map =new UnboundedMap(stacks);
+        IWorldMap map = new UnboundedMap(stacks);
         new Car(map, new Position(2, 2), MapDirection.NORTH);
         new Car(map, new Position(3, 4), MapDirection.NORTH);
         map.run(directions);

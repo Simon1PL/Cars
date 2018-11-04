@@ -55,7 +55,9 @@ public class Car extends AbstractWorldMapElement {
                     break;
             }
             if (this.map.canMoveTo(position)) {
+                //Position position1= new Position(this.position.x, this.position.y);
                 this.position = position;
+                //map.removeObject(new Car(map, position1, MapDirection.NORTH));
             }
         }
     }

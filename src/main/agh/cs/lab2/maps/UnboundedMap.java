@@ -7,66 +7,32 @@ import agh.cs.lab2.mapElements.HayStack;
 import java.util.List;
 
 public class UnboundedMap extends AbstractWorldMap {
-    //pytanie, mozemy teraz tworzyc obiekty z atrybutami "null" lub obiekt "null", jak to zablokowac
-    //pytanie2, czemu wszystkie metody w AbstractWorldMap musza byc publiczne, uzywamy ich tylko wewnatrz tej klasy wiec private lepsze, trzeba by usunac z interface
+    //pytanie, mozemy teraz tworzyc obiekty z atrybutami "null" lub sam obiekt "null", jak to zablokowac
+    //pytanie2, czemu wszystkie metody w AbstractWorldMap musza byc publiczne, uzywamy ich tylko wewnatrz tej klasy wiec private lepsze (trzeba by usunac z interface)
+    //w interface zmienilem car na abstractMapElement w metodzie place ok?
+    //w tym momencie mozemy dodawac albo mape do auta albo auto do mapy, ktore powinno zostac
+    //zmienic nazwe AbstractWorldMapElement na zwykla klase bo to nie jest abstract class czy zmienic na abstract i dodac interfejs zeby dalo sie dziedziczyc(implementowac)
+    //testy do map, bezsensu, jak, atrybuty sa prywatne wiec nie moge sprawdzac a metody sa wywolywane przy tworzeniu obiektow
     public UnboundedMap(List<HayStack> stacks) {
         for (HayStack stack : stacks) {
-            if (canMoveTo(stack.getPosition())) objects.add(stack);
+            this.place(stack);
         }
-        if (this.objects.size() != 0) {
-            this.positionLowerLeft = objects.get(0).getPosition();
-            this.positionUpperRight = objects.get(0).getPosition();
-
-            for (AbstractWorldMapElement object : this.objects) {
-                setMapLimit(object.getPosition());
-            }
-        } else System.out.println("podana lista jest pusta, nie mozna stwozyc unbounded map");
     }
 
-    private void setMapLimit(Position position) {
-        if (!setMapLimitLeft(position)) setMapLimitRight(position);
-        if (!setMapLimitLower(position)) setMapLimitUpper(position);
-    }
-
-    private boolean setMapLimitUpper(Position position) {
-        if (position.y > this.positionUpperRight.y) {
-            this.positionUpperRight = new Position(this.positionUpperRight.x, position.y);
-            return true;
+    public void setMapLimit(Position position) {
+        if (this.positionLowerLeft == null && this.positionUpperRight == null) {
+            this.positionLowerLeft = position;
+            this.positionUpperRight = position;
+        } else {
+            this.positionUpperRight=this.positionUpperRight.upperRight(position);
+            this.positionLowerLeft=this.positionLowerLeft.lowerLeft(position);
         }
-        return false;
-    }
-
-    private boolean setMapLimitLower(Position position) {
-        if (position.y < this.positionLowerLeft.y) {
-            this.positionLowerLeft = new Position(this.positionLowerLeft.x, position.y);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean setMapLimitRight(Position position) {
-        if (position.x > this.positionUpperRight.x) {
-            this.positionUpperRight = new Position(position.x, this.positionUpperRight.y);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean setMapLimitLeft(Position position) {
-        if (position.x < this.positionLowerLeft.x) {
-            this.positionLowerLeft = new Position(position.x, this.positionLowerLeft.y);
-            return true;
-        }
-        return false;
     }
 
     @Override
     public boolean canMoveTo(Position position) {
         if (!isOccupied(position)) {
-            if (this.objects.size() == 0) {
-                this.positionUpperRight = position;
-                this.positionLowerLeft = position;
-            } else setMapLimit(position);
+            setMapLimit(position);
             return true;
         }
         return false;
@@ -79,24 +45,12 @@ public class UnboundedMap extends AbstractWorldMap {
             this.positionLowerLeft = null;
             this.positionUpperRight = null;
         } else {
-            if (this.positionUpperRight.x == object.getPosition().x) {
-                this.positionUpperRight = new Position(objects.get(0).getPosition().x, this.positionUpperRight.y);
-                for (AbstractWorldMapElement element : this.objects)
-                    setMapLimitRight(element.getPosition());
-            } else if (this.positionLowerLeft.x == object.getPosition().x) {
-                this.positionLowerLeft = new Position(objects.get(0).getPosition().x, this.positionLowerLeft.y);
-                for (AbstractWorldMapElement element : this.objects)
-                    setMapLimitLeft(element.getPosition());
-            }
-            if (this.positionUpperRight.y == object.getPosition().y) {
-                this.positionUpperRight = new Position(this.positionUpperRight.x, objects.get(0).getPosition().y);
-                for (AbstractWorldMapElement element : this.objects)
-                    setMapLimitUpper(element.getPosition());
-            } else if (this.positionLowerLeft.y == object.getPosition().y) {
-                this.positionLowerLeft = new Position(this.positionLowerLeft.x, objects.get(0).getPosition().y);
-                for (AbstractWorldMapElement element : this.objects)
-                    setMapLimitLower(element.getPosition());
-
+            if (this.positionUpperRight.x == object.getPosition().x || this.positionUpperRight.y == object.getPosition().y || this.positionLowerLeft.y == object.getPosition().y || this.positionLowerLeft.x == object.getPosition().x) {
+                this.positionLowerLeft=null;
+                this.positionUpperRight=null;
+                for (AbstractWorldMapElement element : this.objects) {
+                    setMapLimit(element.getPosition());
+                }
             }
         }
     }

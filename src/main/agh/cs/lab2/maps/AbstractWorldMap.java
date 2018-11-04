@@ -17,17 +17,23 @@ abstract class AbstractWorldMap implements IWorldMap {
         return new MapVisualizer(this).draw(this.positionLowerLeft, this.positionUpperRight);
     }
 
-    public boolean isOccupied(Position position) {
-        if (objectAt(position) != null) return true;
-        return false;
-    }
-
-    public Object objectAt(Position position) {
+    public AbstractWorldMapElement objectAt(Position position) {
         for (AbstractWorldMapElement object : this.objects) {
             if (object.getPosition().equals(position))
                 return object;
         }
         return null;
+    }
+
+    public boolean isOccupied(Position position) {
+        if (objectAt(position) != null) return true;
+        return false;
+    }
+
+    public boolean canMoveTo(Position position) {
+        if (!isOccupied(position))
+            return true;
+        return false;
     }
 
     public boolean place(AbstractWorldMapElement object) {
@@ -39,28 +45,21 @@ abstract class AbstractWorldMap implements IWorldMap {
     }
 
     public void run(MoveDirection[] directions) {
-        if (this.objects.size() != 0) {
-            List<Car> vehicles = new ArrayList<>();
-            for (AbstractWorldMapElement object : this.objects) {
-                if ((object instanceof Car)) {
-                    Car vehicle = (Car) object;
-                    vehicles.add(vehicle);
-                }
+        List<Car> vehicles = new ArrayList<>();
+        for (AbstractWorldMapElement object : this.objects) {
+            if ((object instanceof Car)) {
+                Car vehicle = (Car) object;
+                vehicles.add(vehicle);
             }
-            if (vehicles.size() != 0) {
-                for (int carNumber = 0; carNumber < vehicles.size(); carNumber++) {
-                    int moveNumber = 0;
-                    while (carNumber + moveNumber * vehicles.size()  < directions.length) {
-                        vehicles.get(carNumber).move(directions[carNumber + moveNumber * vehicles.size()]);
-                        moveNumber += 1;
-                    }
-                    if (carNumber == directions.length - 1) return;
-                }
+        }
+        if (vehicles.size() != 0) {
+            for (int moveNumber = 0; moveNumber < directions.length; moveNumber++) {
+                vehicles.get(moveNumber % vehicles.size()).move(directions[moveNumber]);
             }
         }
     }
 
-    public void removeObject(AbstractWorldMapElement object){
+    public void removeObject(AbstractWorldMapElement object) {
         this.objects.remove(object);
     }
 }
