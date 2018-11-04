@@ -8,6 +8,7 @@ import static org.junit.Assert.assertTrue;
 
 public class RectangularMapTest {
     @Test
+    //mlekeoeoeoeoeoeoeoeoe
     public void testCanMoveTo() {
         assertFalse(0==1);
         assertTrue(1==1);
