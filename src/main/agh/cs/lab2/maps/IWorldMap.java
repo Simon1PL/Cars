@@ -1,8 +1,8 @@
 package agh.cs.lab2.maps;
 
 import agh.cs.lab2.MoveDirection;
-import agh.cs.lab2.mapElements.AbstractWorldMapElement;
 import agh.cs.lab2.Position;
+import agh.cs.lab2.mapElements.IWorldElement;
 
 /**
  * Interface responsible for interacting with the map of the world.
@@ -24,7 +24,7 @@ public interface IWorldMap {
      * @param car The car to place on the map.
      * @return True if the car was placed. The car cannot be placed if the map is already occupied.
      */
-    boolean place(AbstractWorldMapElement object);
+    boolean place(IWorldElement object);
 
     /**
      * Move the cars on the map according to the provided move directions. Every
@@ -52,5 +52,5 @@ public interface IWorldMap {
      */
     Object objectAt(Position position);
 
-    void removeObject(AbstractWorldMapElement object);
+    void removeObject(IWorldElement object);
 }

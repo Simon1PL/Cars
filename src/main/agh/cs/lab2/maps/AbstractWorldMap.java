@@ -2,27 +2,24 @@ package agh.cs.lab2.maps;
 
 import agh.cs.lab2.MoveDirection;
 import agh.cs.lab2.Position;
-import agh.cs.lab2.mapElements.AbstractWorldMapElement;
 import agh.cs.lab2.mapElements.Car;
+import agh.cs.lab2.mapElements.IWorldElement;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 abstract class AbstractWorldMap implements IWorldMap {
     protected Position positionUpperRight;
     protected Position positionLowerLeft;
-    protected List<AbstractWorldMapElement> objects = new ArrayList<>();
+    protected Map<Position,Car> cars = new HashMap<>();
+    protected Map<Position,IWorldElement> objects = new HashMap<>();
 
     public String toString() {
         return new MapVisualizer(this).draw(this.positionLowerLeft, this.positionUpperRight);
     }
 
-    public AbstractWorldMapElement objectAt(Position position) {
-        for (AbstractWorldMapElement object : this.objects) {
-            if (object.getPosition().equals(position))
-                return object;
-        }
-        return null;
+    public IWorldElement objectAt(Position position) {
+        return objects.get(position);
     }
 
     public boolean isOccupied(Position position) {
@@ -36,30 +33,35 @@ abstract class AbstractWorldMap implements IWorldMap {
         return false;
     }
 
-    public boolean place(AbstractWorldMapElement object) {
+    public boolean place(IWorldElement object) {
         if (canMoveTo(object.getPosition())) {
-            this.objects.add(object);
+            if (object instanceof Car) {
+                this.cars.put(object.getPosition(), (Car) object);
+            }
+            this.objects.put(object.getPosition(), object);
             return true;
         }
-        return false;
+        throw new IllegalArgumentException("position " + object.getPosition() + " is unavailable");
     }
 
     public void run(MoveDirection[] directions) {
-        List<Car> vehicles = new ArrayList<>();
-        for (AbstractWorldMapElement object : this.objects) {
-            if ((object instanceof Car)) {
-                Car vehicle = (Car) object;
-                vehicles.add(vehicle);
-            }
-        }
-        if (vehicles.size() != 0) {
+        if (cars.size() != 0) {
             for (int moveNumber = 0; moveNumber < directions.length; moveNumber++) {
-                vehicles.get(moveNumber % vehicles.size()).move(directions[moveNumber]);
+                Car car1 = (Car) cars.values().toArray()[moveNumber % cars.size()];
+                Position lastPosition = new Position(car1.getPosition().x, car1.getPosition().y);
+                car1.move(directions[moveNumber]);
+                if (!car1.getPosition().equals(lastPosition)) {
+                    objects.remove(lastPosition);
+                    cars.remove(lastPosition);
+                    objects.put(car1.getPosition(), car1);
+                    cars.putIfAbsent(car1.getPosition(), car1);
+                }
+                System.out.println(cars);
             }
         }
     }
 
-    public void removeObject(AbstractWorldMapElement object) {
+    public void removeObject(IWorldElement object) {
         this.objects.remove(object);
     }
 }

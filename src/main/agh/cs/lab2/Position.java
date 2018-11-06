@@ -33,7 +33,7 @@ public class Position {
         return new Position((this.x + position.x), (this.y + position.y));
     }
 
-
+    @Override
     public boolean equals(Object other) {
         if (this == other)
             return true;
@@ -41,5 +41,13 @@ public class Position {
             return false;
         Position that = (Position) other;
         return (this.x == that.x && this.y == that.y);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 13;
+        hash += this.x * 31;
+        hash += this.y * 17;
+        return hash;
     }
 }

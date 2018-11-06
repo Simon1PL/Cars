@@ -36,6 +36,8 @@ public class OptionsParser {
                     result[k] = MoveDirection.RIGHT;
                     k++;
                     break;
+                default:
+                    throw new IllegalArgumentException(strings[i] + " argument is invalid");
             }
         }
         MoveDirection[] result2 = new MoveDirection[k];

@@ -3,7 +3,7 @@ package agh.cs.lab2.mapElements;
 import agh.cs.lab2.maps.IWorldMap;
 import agh.cs.lab2.Position;
 
-public class AbstractWorldMapElement{
+abstract class AbstractWorldMapElement implements IWorldElement{
     protected Position position;
     protected IWorldMap map;
 
